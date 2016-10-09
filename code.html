@@ -10,21 +10,47 @@
 
 </body>
 
-<p id="p1">Hello Folks</p>
+<!-- HTML Element p, id pBiggerText, effect: CSS - Make text bigger -->
+<p id="pBiggerText">Click to make this text bigger</p>
+<!-- HTML Element p, id pBold, effect: CSS - Make text bold -->
+<p id="pBold">Click to make this text bold</p>
 
-<p id="p2">Do we actually like jquery??</p>
+<!-- HTML Element h1, id hMakeGreen, effect: CSS - Give Green background -->
+<h1 id="hMakeGreen">Click to make this background green</h1>
 
-<button id="button1" onclick="bringBack()">Bring Them Back!</button>
+<!-- HTML Element p, id font1, effect: CSS - Make text italic -->
+<button id="buttonChangeItalic">Click to make below text italic</button>
+<p id="font1">I can affect one element by clicking a different element.</p>
 
-<button id="button2" onclick="fade()">Fade</button>
+<!-- HTML Element h3, id hGiveBorder, effect: CSS - Give a red, dotted border-->
+<h3 id="hGiveBorder">Click this to give it a border - I can apply multiple effects at once!</h3>
 
-<script>
-$(document).ready(function() {
-	setTimeout(disappear, 1500);
-	//setTimeout(slide, 10000)
-})
+<!-- HTML Element button, id buttonFade, effect: JQuery Effect - Fade the button out -->
+<button id="buttonFade">Fade This Button</button>
+<!-- HTML Element button, id buttonBringBack, effect: JQuery Effect - Show the button -->
+<button id="buttonBringBack">Bring It Back!</button>
+
+<!-- HTML Element button, id buttonToggle, effect: JQuery Effect - Toggle all h1 tags -->
+<button id="buttonToggle">Toggle H1 tag</button>
+
+<!-- HTML Element button, id buttonSlideUp, effect: JQuery Effect - Slide up all p tags slow -->
+<button id="buttonSlideUp">Slide Up P tags</button>
+<!-- HTML Element button, id buttonSlideDown, effect: JQuery Effect - Slide down all p tags fast-->
+<button id="buttonSlideDown">Slide Down P tags</button>
+
+<br><br>
+<!-- HTML Element input, id eventInput, effect: JQuery Event - Change below text on focus and blur -->
+<input id="eventInput">
+<p id="eventInputText">Click the input box above.</p>
+
+<!-- HTML Element h1, id hHover, effect: JQuery Event - Change text on hover -->
+<h1 id="hHover">Hover over this text</h1>
+
+<!-- HTML Element p, id oneClick, effect: JQuery Event - Change text differently on first click vs subsequent clicks-->
+<p id="oneClick">Different behavior on first click</p>
+
+<!-- Essentially everything uses On Click JQuery Functions. 
+All functionality contained in $(document).ready(function() {... -->
 
 
-
-</script>
 </html>
