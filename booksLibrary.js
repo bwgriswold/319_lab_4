@@ -35,7 +35,8 @@ no global variables or functions
 
 */
 
-function Library() {
+function Library(longestShelf) {
+	this.longestShelf = longestShelf;
 	this.shelves = []; //has shelves[] that will contain all shelves
 	
 	this.addShelf = function(shelf) {
@@ -48,11 +49,16 @@ function Library() {
 		}
 		table += "</tr>";
 		
-		for (j = 0; j < 8; j++) {
+		for (j = 0; j < library.longestShelf; j++) {
 			table += "<tr>"
 			for (i = 0; i < this.shelves.length; i++) {
 				if (this.shelves[i].books[j]) {
-					table += "<td style=\"border:1px solid black\">" + this.shelves[i].books[j].id + "</td>";
+					if (this.shelves[i].books[j].presence == 0) {
+						table += "<td bgcolor=\"#FF0000\" style=\"border:1px solid black\">" + this.shelves[i].books[j].name + "</td>";
+					}
+					else {
+						table += "<td style=\"border:1px solid black\">" + this.shelves[i].books[j].name + "</td>";
+					}
 				}
 				else {
 					table += "<td style=\"border:1px solid black\"></td>";
@@ -78,8 +84,9 @@ function Shelf(shelfName) {
 	}
 }
 
-function Book(id, presence, borrowed) {
+function Book(id, name, presence, borrowed) {
 	this.id = id;
+	this.name = name;
 	this.presence = presence;
 	this.borrowed = borrowed;
 	
@@ -93,9 +100,9 @@ function Book(id, presence, borrowed) {
 }
 
 function initLibrary() {
-	var book0 = new Book(0, 1, "");
-	var book4 = new Book(4, 1, "");
-	var book8 = new Book(8, 1, "");
+	var book0 = new Book(0, "B0", 1, "");
+	var book4 = new Book(4, "B4", 1, "");
+	var book8 = new Book(8, "B8", 1, "");
 	//TODO add rest of Art books
 	
 	var shelfArt = new Shelf("Shelf Art");
@@ -103,9 +110,9 @@ function initLibrary() {
 	shelfArt.addBook(book4);
 	shelfArt.addBook(book8);
 	
-	var book1 = new Book(1, 1, "");
-	var book5 = new Book(5, 1, "");
-	var book9 = new Book(9, 1, "");
+	var book1 = new Book(1, "B1", 1, "");
+	var book5 = new Book(5, "B5", 1, "");
+	var book9 = new Book(9, "B9", 1, "");
 	//TODO add rest of Science books
 	
 	var shelfScience = new Shelf("Shelf Science");
@@ -113,7 +120,7 @@ function initLibrary() {
 	shelfScience.addBook(book5);
 	shelfScience.addBook(book9);
 	
-	var library = new Library();
+	var library = new Library(8);
 	library.addShelf(shelfArt);
 	library.addShelf(shelfScience);
 	//TODO add other two shelves
@@ -144,6 +151,7 @@ function login() {
 function librarianView(library) {
 	var libraryTable = library.print();
 	document.write(libraryTable);
+	//TODO how to "add specific book to specific shelf"?
 	
 	//assign table functionality
 	var table = document.getElementById("tableID");
@@ -151,14 +159,28 @@ function librarianView(library) {
 	    for (var i = 0; i < table.rows.length; i++) {
 	        for (var j = 0; j < table.rows[i].cells.length; j++)
 	        table.rows[i].cells[j].onclick = function () {
-	            tableText(this);
-	            //TODO how will i call a function on this particular book? 
+	            bookDetails(this);
 	        };
 	    }
 	}
 
-	function tableText(tableCell) {
-	    console.log(tableCell);
+	function bookDetails(tableCell) {
+		bookName = tableCell.innerHTML;
+		
+		for (i = 0; i < library.shelves.length; i++) {
+			for (j = 0; j < library.longestShelf; j++) {
+				book = library.shelves[i].books[j];
+				if (book) {
+					if (book.name == bookName) {
+						console.log("found!");
+						console.log(book);
+						alert(book.name + "is on " + library.shelves[i].shelfName);
+						//TODO info about borrowed by, presence?
+						return;
+					}	
+				}
+			}
+		}
 	}
 }
 
