@@ -44,12 +44,12 @@ function Library(longestShelf) {
 	}
 	this.print = function() {
 		var table = "<table id=\"tableID\" style=\"border:1px solid black\"><tr>";
-		for (i = 0; i < library.shelves.length; i++) {
-			table += library.shelves[i].printHeader();
+		for (i = 0; i < this.shelves.length; i++) {
+			table += this.shelves[i].printHeader();
 		}
 		table += "</tr>";
 		
-		for (j = 0; j < library.longestShelf; j++) {
+		for (j = 0; j < this.longestShelf; j++) {
 			table += "<tr>"
 			for (i = 0; i < this.shelves.length; i++) {
 				if (this.shelves[i].books[j]) {
@@ -69,6 +69,15 @@ function Library(longestShelf) {
 		
 		table += "</table>";
 		return table;
+	}
+	
+	this.updateLongest = function() { //updates longest shelf after book has been added
+		var longest = this.shelves[0].books.length;
+		for(var i = 1; i < this.shelves.length; i += 1) {
+			if (this.shelves[i].books.length > longest)
+				longest = this.shelves[i].books.length;
+		}
+		this.longestShelf = longest;
 	}
 }
 
@@ -100,50 +109,66 @@ function Book(id, name, presence, borrowed) {
 }
 
 function initLibrary() {
-	var book0 = new Book(0, "B0", 1, "");
-	var book4 = new Book(4, "B4", 1, "");
-	var book8 = new Book(8, "B8", 1, "");
-	//TODO add rest of Art books
+	//TODO need to have old library stored
+	//if (old library doesn't exist)
 	
 	var shelfArt = new Shelf("Shelf Art");
-	shelfArt.addBook(book0);
-	shelfArt.addBook(book4);
-	shelfArt.addBook(book8);
-	
-	var book1 = new Book(1, "B1", 1, "");
-	var book5 = new Book(5, "B5", 1, "");
-	var book9 = new Book(9, "B9", 1, "");
-	//TODO add rest of Science books
+	shelfArt.addBook(new Book(0, "B0", 1, ""));
+	shelfArt.addBook(new Book(4, "B4", 1, ""));
+	shelfArt.addBook(new Book(8, "B8", 1, ""));
+	shelfArt.addBook(new Book(12, "B12", 1, ""));
+	shelfArt.addBook(new Book(16, "B16", 1, ""));
+	shelfArt.addBook(new Book(20, "B20", 1, ""));
 	
 	var shelfScience = new Shelf("Shelf Science");
-	shelfScience.addBook(book1);
-	shelfScience.addBook(book5);
-	shelfScience.addBook(book9);
+	shelfScience.addBook(new Book(1, "B1", 1, ""));
+	shelfScience.addBook(new Book(5, "B5", 1, ""));
+	shelfScience.addBook(new Book(9, "B9", 1, ""));
+	shelfScience.addBook(new Book(13, "B13", 1, ""));
+	shelfScience.addBook(new Book(17, "R1", 1, ""));
+	shelfScience.addBook(new Book(21, "R2", 1, ""));
 	
-	var library = new Library(8);
-	library.addShelf(shelfArt);
+	var shelfSport = new Shelf("Shelf Sport");
+	shelfSport.addBook(new Book(2, "B2", 1, ""));
+	shelfSport.addBook(new Book(6, "B6", 1, ""));
+	shelfSport.addBook(new Book(10, "B10", 1, ""));
+	shelfSport.addBook(new Book(14, "B14", 1, ""));
+	shelfSport.addBook(new Book(18, "B18", 1, ""));
+	shelfSport.addBook(new Book(22, "B22", 1, ""));
+	
+	var shelfLiterature = new Shelf("Shelf Literature");
+	shelfLiterature.addBook(new Book(3, "B3", 1, ""));
+	shelfLiterature.addBook(new Book(7, "B7", 1, ""));
+	shelfLiterature.addBook(new Book(11, "B11", 1, ""));
+	shelfLiterature.addBook(new Book(15, "B15", 1, ""));
+	shelfLiterature.addBook(new Book(19, "R3", 1, ""));
+	shelfLiterature.addBook(new Book(23, "R4", 1, ""));
+	shelfLiterature.addBook(new Book(27, "R5", 1, ""));
+	
+	var library = new Library(7);
+	library.addShelf(shelfLiterature);
 	library.addShelf(shelfScience);
-	//TODO add other two shelves
+	library.addShelf(shelfSport)
+	library.addShelf(shelfArt);
 	console.log(library);
 	
-	//TODO something with Reference books
 	return library;
 }
 
 function login() {
 	var username = document.getElementById("username").value;
 	var password = document.getElementById("password").value;
-	
+	var library = initLibrary();
 	
 	if ((username == "admin") && (password == "admin")) {
 		console.log("logging in as librarian");
-		library = initLibrary();
 		librarianView(library);
 	}
 	else if (username.charAt(0).toLowerCase() != 'u') {
 		alert("Username or Password is incorrect!");
 	}
 	else {
+		studentView(library, username);
 		console.log("logging in as student");
 	}
 }
@@ -151,7 +176,6 @@ function login() {
 function librarianView(library) {
 	var libraryTable = library.print();
 	document.write(libraryTable);
-	//TODO how to "add specific book to specific shelf"?
 	
 	//assign table functionality
 	var table = document.getElementById("tableID");
@@ -165,7 +189,7 @@ function librarianView(library) {
 	}
 
 	function bookDetails(tableCell) {
-		bookName = tableCell.innerHTML;
+		var bookName = tableCell.innerHTML;
 		
 		for (i = 0; i < library.shelves.length; i++) {
 			for (j = 0; j < library.longestShelf; j++) {
@@ -174,21 +198,57 @@ function librarianView(library) {
 					if (book.name == bookName) {
 						console.log("found!");
 						console.log(book);
-						alert(book.name + "is on " + library.shelves[i].shelfName);
-						//TODO info about borrowed by, presence?
+						alert(book.name + " is on " + library.shelves[i].shelfName);
+						//TODO info about borrowed by, presence? We can have a separate one in the student for this
 						return;
 					}	
 				}
 			}
 		}
+		console.log("book not found");
+		//TODO how to get column of tableCell?? then use that to determine the shelf *MUST BE EQUAL TO SHELVES INDEX*
+		var shelf = "x";
+		var minus = 0;
+		
+		if (col == 0){
+			shelf = "Literature";
+			minus = 1;
+		} else if (col == 1) {
+			shelf = "Science";
+			minus = 3;
+		} else if (col == 2) {
+			shelf = "Sport";
+			minus = 2;
+		} else {
+			shelf = "Art";
+			minus = 4;
+		}
+		
+		var string = "Would you like to add a book on the " + shelf + " shelf?";
+		var add = confirm(string);
+		if (add) {
+			var notAdded = true;
+			var bookName = "";
+			while(notAdded) {
+				string = "Enter the name of book to be added: \nRegular book begins with 'B' Reference with 'R'";
+				bookName = prompt(string, "x");
+				if(bookName.charAt(0) == 'B' || bookName.charAt(0) == 'R') 
+					notAdded = false;
+			}
+			var bookID = library.shelves[col].books.length * 4 - minus;
+			library.shelves[col].addBook(new Book(bookID, bookName, 1, ""));
+			library.updateLongest();
+			document.body.innerHTML = "";
+			librarianView(library);
+		}
 	}
 }
 
-function studentView() {
+function studentView(library, username) {
 	//TODO
 }
 
-
+//TODO need a button at the bottom to logout or go back to login screen and still keep the library
 
 
 
